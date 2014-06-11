@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>component-rjs</title>
+
+        <style>
+            body {
+                font-family: sans-serif;
+            }
+            .component--enhanced {
+                background: blue;
+            }
+        </style>
+
+        <script>
+            var require = {
+                baseUrl: 'js',
+                paths: {
+                    'jquery': 'vendor/jquery'
+                }
+            };  
+        </script>
+        <script data-main="main" src="js/require.js"></script>
+        <script>
+            var enhanced = true; //('addEventListener' in window && 'querySelector' in document && 'localStorage' in window);
+            var config = {
+                resourcePath: 'http://www.example.com/resources/'
+            };
+            if (enhanced) {
+                define('config', [], function () {
+                    return window.config;
+                });
+                define('ready', ['jquery'], function ($) {
+                    // Loader plugin API
+                    // http://requirejs.org/docs/plugins.html#api
+                    return {
+                        load: function (name, req, onload, config) {
+                            $(function () {
+                                window.setTimeout(function () {
+                                    onload();
+                                }, 2000);
+                            });
+                        }
+                    };
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <h1>component-rjs</h1>
+
+        <div id="top-stories-1" class="top-stories component">
+            <h2>Top Stories</h2>
+            <ol>
+                <li>Story 1</li>
+                <li>Story 2</li>
+                <li>Story 3</li>
+            </ol>
+            <script>
+                require(['components/top-stories', 'ready!'], function (TopStories) {
+                    var topStories = new TopStories("top-stories-1");
+                });
+            </script>
+        </div>
+
+        <div id="media-wall-1" class="media-wall component">
+            <h2>Audio Video 1</h2>
+            <ol>
+                <li>AV 1</li>
+                <li>AV 2</li>
+                <li>AV 3</li>
+            </ol>
+            <script>
+                require(['components/media-wall', 'ready!'], function (MediaWall) {
+                    var mediaWall = new MediaWall("media-wall-1");
+                });
+            </script>
+        </div>
+
+        <div id="media-wall-2" class="media-wall component">
+            <h2>Audio Video 2</h2>
+            <ol>
+                <li>AV 1</li>
+                <li>AV 2</li>
+                <li>AV 3</li>
+            </ol>
+            <script>
+                require(['components/media-wall', 'ready!'], function (MediaWall) {
+                    var mediaWall = new MediaWall("media-wall-2");
+                });
+            </script>
+        </div>
+    </body>
+</html>
