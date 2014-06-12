@@ -18,16 +18,48 @@
                 paths: {
                     'jquery': 'vendor/jquery'
                 }
-            };  
+            };
         </script>
         <script src="js/require.js"></script>
-        <script>
+        <script>        
             var modules = []; 
             var enhanced = true; //('addEventListener' in window && 'querySelector' in document && 'localStorage' in window);
+            var production = false;
             var config = {
                 resourcePath: 'http://www.example.com/resources/'
             };
             if (enhanced) {
+                define('ready', ['jquery'], function ($) {
+                    // Loader plugin API: http://requirejs.org/docs/plugins.html#api
+                    return {
+                        domReady: false,
+                        pageReady: false,
+                        onload: null,
+                        load: function (name, req, onload, config) {
+                            var self = this;
+                            this.onload = onload;
+                            $(function () {
+                                self.domIsReady();
+                            });
+                        },
+                        domIsReady: function () {
+                            this.domReady = true;
+                            console.log('DOM is ready');
+                            this.readySetGo();
+                        },
+                        pageIsReady: function () {
+                            this.pageReady = true;
+                            console.log('Page is ready');
+                            this.readySetGo();
+                        },
+                        readySetGo: function () {
+                            if (this.domReady && this.pageReady) {
+                                console.log('Ready set go...');
+                                this.onload();
+                            }
+                        }
+                    };
+                });
                 define('config', [], function () {
                     return window.config;
                 });
@@ -45,10 +77,11 @@
                 <li>Story 3</li>
             </ol>
             <script>
-            modules.push(function () {})
                 if (enhanced) {
-                    require(['components/top-stories', 'ready!'], function (TopStories) {
-                        var topStories = new TopStories('top-stories-1');
+                    require(['ready!'], function () {
+                        require(['components/top-stories'], function (TopStories) {
+                            var topStories = new TopStories('top-stories-1');
+                        });
                     });
                 }
             </script>
@@ -63,8 +96,10 @@
             </ol>
             <script>
                 if (enhanced) {
-                    require(['components/media-wall', 'ready!'], function (MediaWall) {
-                        var mediaWall = new MediaWall('media-wall-1');
+                    require(['ready!'], function () {
+                        require(['components/media-wall'], function (MediaWall) {
+                            var mediaWall = new MediaWall('media-wall-1');
+                        });
                     });
                 }
             </script>
@@ -79,18 +114,24 @@
             </ol>
             <script>
                 if (enhanced) {
-                    require(['components/media-wall', 'ready!'], function (MediaWall) {
-                        var mediaWall = new MediaWall('media-wall-2');
+                    require(['ready!'], function () {
+                        require(['components/media-wall'], function (MediaWall) {
+                            var mediaWall = new MediaWall('media-wall-2');
+                        });
                     });
-                };
+                }
             </script>
         </div>
 
         <script>
             if (enhanced) {
-                require(['all-compiled'], function () {
+                require([], function () {
+
+                    if (production)
+                        require(['all-compiled']);
+
                     require(['ready'], function (ready) {
-                        ready.go();
+                        ready.pageIsReady();
                     });
                 });
             }
