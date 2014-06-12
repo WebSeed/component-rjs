@@ -10,6 +10,9 @@
             .component--enhanced {
                 background: blue;
             }
+            .page-meddling {
+                background: green;
+            }
         </style>
 
         <script>
@@ -125,13 +128,15 @@
 
         <script>
             if (enhanced) {
-                require([], function () {
+                require(['ready'], function (ready) {
 
                     if (production)
                         require(['all-compiled']);
 
-                    require(['ready'], function (ready) {
-                        ready.pageIsReady();
+                    ready.pageIsReady();
+
+                    require(['page', 'ready!'], function (page) {
+                        page.init();
                     });
                 });
             }
