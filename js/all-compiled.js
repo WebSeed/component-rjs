@@ -1,4 +1,13 @@
 
+define('page',['jquery'], function ($) {
+    var page = {
+        init: function () {
+            console.log('Page init()');
+            $('li').addClass('page-meddling');
+        }
+    };
+    return page;
+});
 define('components/media-wall',['jquery', 'config'], function ($, config) {
 
     var MediaWall = function (componentId) {

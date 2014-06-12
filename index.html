@@ -27,7 +27,7 @@
         <script>        
             var modules = []; 
             var enhanced = true; //('addEventListener' in window && 'querySelector' in document && 'localStorage' in window);
-            var production = false;
+            var production = true;
             var config = {
                 resourcePath: 'http://www.example.com/resources/'
             };
@@ -129,15 +129,13 @@
         <script>
             if (enhanced) {
                 require(['ready'], function (ready) {
-
-                    if (production)
-                        require(['all-compiled']);
-
-                    ready.pageIsReady();
-
-                    require(['page', 'ready!'], function (page) {
-                        page.init();
-                    });
+                    var main = function () {
+                        ready.pageIsReady();
+                        require(['page', 'ready!'], function (page) {
+                            page.init();
+                        });
+                    };
+                    production ? require(['all-compiled'], main) : main();
                 });
             }
         </script>
