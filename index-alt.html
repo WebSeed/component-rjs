@@ -27,27 +27,21 @@
         <script>        
             var modules = []; 
             var enhanced = true; //('addEventListener' in window && 'querySelector' in document && 'localStorage' in window);
-            var production = false;
+            var production = true;
             var config = {
                 resourcePath: 'http://www.example.com/resources/'
             };
             if (enhanced) {
+                
+                var defs = [], reqs = [];
+                var _define = define, _require = require;
+                var define = function () { defs.push(arguments); };
+                var require = function () { reqs.push(arguments); };
+
                 define('onesport', function () {
                     return window.onesport;
                 });
-                define('readySetGo', function () {
-                    // Loader plugin API: http://requirejs.org/docs/plugins.html#api
-                    return {
-                        onload: null,
-                        load: function (name, req, onload, config) {
-                            var self = this;
-                            this.onload = onload;
-                        },
-                        setGo: function () {
-                            this.onload();
-                        }
-                    };
-                });
+
                 define('config', [], function () {
                     return window.config;
                 });
@@ -65,13 +59,9 @@
                 <li>Story 3</li>
             </ol>
             <script>
-                if (enhanced) {
-                    require(['readySetGo!'], function () {
-                        require(['components/top-stories'], function (TopStories) {
-                            var topStories = new TopStories('top-stories-1');
-                        });
-                    });
-                }
+                require(['components/top-stories'], function (TopStories) {
+                    var topStories = new TopStories('top-stories-1');
+                });
             </script>
         </div>
 
@@ -83,13 +73,9 @@
                 <li>AV 3</li>
             </ol>
             <script>
-                if (enhanced) {
-                    require(['readySetGo!'], function () {
-                        require(['components/media-wall'], function (MediaWall) {
-                            var mediaWall = new MediaWall('media-wall-1');
-                        });
-                    });
-                }
+                require(['components/media-wall'], function (MediaWall) {
+                    var mediaWall = new MediaWall('media-wall-1');
+                });
             </script>
         </div>
 
@@ -101,27 +87,35 @@
                 <li>AV 3</li>
             </ol>
             <script>
-                if (enhanced) {
-                    require(['readySetGo!'], function () {
-                        require(['components/media-wall'], function (MediaWall) {
-                            var mediaWall = new MediaWall('media-wall-2');
-                        });
-                    });
-                }
+                require(['components/media-wall'], function (MediaWall) {
+                    var mediaWall = new MediaWall('media-wall-2');
+                });
             </script>
         </div>
 
         <script>
             if (enhanced) {
-                require(['readySetGo'], function (ready) {
-                    var main = function () {
-                        ready.setGo();
-                        require(['page'], function (page) {
-                            page.init();
-                        });
-                    };
-                    production ? require(['all-compiled'], main) : main();
-                });
+
+                define = _define;
+                require = _require;
+
+                var main = function () {
+
+                    var self = this;
+
+                    defs.forEach(function (args) {
+                        define.apply(self, args);
+                    });
+
+                    reqs.forEach(function (args) {
+                        require.apply(self, args);
+                    });
+
+                    require(['page'], function (page) {
+                        page.init();
+                    });
+                };
+                production ? require(['all-compiled'], main) : main();
             }
         </script>
     </body>
