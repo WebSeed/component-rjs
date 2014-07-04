@@ -35,34 +35,16 @@
                 define(['onesport'], function () {
                     return window.onesport;
                 });
-                define('ready', ['jquery'], function ($) {
+                define('readySetGo', function () {
                     // Loader plugin API: http://requirejs.org/docs/plugins.html#api
                     return {
-                        domReady: false,
-                        pageReady: false,
                         onload: null,
                         load: function (name, req, onload, config) {
                             var self = this;
                             this.onload = onload;
-                            $(function () {
-                                self.domIsReady();
-                            });
                         },
-                        domIsReady: function () {
-                            this.domReady = true;
-                            console.log('DOM is ready');
-                            this.readySetGo();
-                        },
-                        pageIsReady: function () {
-                            this.pageReady = true;
-                            console.log('Page is ready');
-                            this.readySetGo();
-                        },
-                        readySetGo: function () {
-                            if (this.domReady && this.pageReady) {
-                                console.log('Ready set go...');
-                                this.onload();
-                            }
+                        setGo: function () {
+                            this.onload();
                         }
                     };
                 });
@@ -84,7 +66,7 @@
             </ol>
             <script>
                 if (enhanced) {
-                    require(['ready!'], function () {
+                    require(['readySetGo!'], function () {
                         require(['components/top-stories'], function (TopStories) {
                             var topStories = new TopStories('top-stories-1');
                         });
@@ -102,7 +84,7 @@
             </ol>
             <script>
                 if (enhanced) {
-                    require(['ready!'], function () {
+                    require(['readySetGo!'], function () {
                         require(['components/media-wall'], function (MediaWall) {
                             var mediaWall = new MediaWall('media-wall-1');
                         });
@@ -120,7 +102,7 @@
             </ol>
             <script>
                 if (enhanced) {
-                    require(['ready!'], function () {
+                    require(['readySetGo!'], function () {
                         require(['components/media-wall'], function (MediaWall) {
                             var mediaWall = new MediaWall('media-wall-2');
                         });
@@ -131,10 +113,10 @@
 
         <script>
             if (enhanced) {
-                require(['ready'], function (ready) {
+                require(['readySetGo'], function (ready) {
                     var main = function () {
-                        ready.pageIsReady();
-                        require(['page', 'ready!'], function (page) {
+                        ready.setGo();
+                        require(['page'], function (page) {
                             page.init();
                         });
                     };
