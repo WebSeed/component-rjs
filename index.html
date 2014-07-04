@@ -27,11 +27,14 @@
         <script>        
             var modules = []; 
             var enhanced = true; //('addEventListener' in window && 'querySelector' in document && 'localStorage' in window);
-            var production = true;
+            var production = false;
             var config = {
                 resourcePath: 'http://www.example.com/resources/'
             };
             if (enhanced) {
+                define(['onesport'], function () {
+                    return window.onesport;
+                });
                 define('ready', ['jquery'], function ($) {
                     // Loader plugin API: http://requirejs.org/docs/plugins.html#api
                     return {
